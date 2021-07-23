@@ -2,7 +2,7 @@
     "name": "esp-ccs811",
     "version": "1.0.0",
     "description": "A library built on esp-idf for reading Si1145 light sensors.",
-    "keywords": "ccs811, air, quality, voc, sensor, i2c, hardware, esp-idf, esp32, esp8266",
+    "keywords": "ccs811, air, quality, co2, eco2, tvoc, sensor, i2c, hardware, esp-idf, esp32, esp8266",
     "repository": {
         "type": "git",
         "url": "https://github.com/khoek/esp-ccs811.git"
