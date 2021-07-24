@@ -2,7 +2,7 @@
 #include <esp_log.h>
 #include <libi2c.h>
 
-#include "esp-ccs811.h"
+#include "device/ccs811.h"
 
 static const char *TAG = "ccs811";
 
@@ -41,7 +41,7 @@ esp_err_t ccs811_init(i2c_port_t port, uint8_t addr, ccs811_handle_t *out_dev) {
     uint8_t reg_fw_app_version[2];
     ccs811_reg_read(dev, CCS811_REG_FW_APP_VERSION, 2, reg_fw_app_version);
 
-    ESP_LOGI(TAG, "hw(rev=%d), fw(boot=%d.%d.%d,app=%d.%d.%d)",
+    ESP_LOGD(TAG, "hw(rev=%d), fw(boot=%d.%d.%d,app=%d.%d.%d)",
              reg_hw_version & MASK_CCS811_HW_VERSION_REVISION,
              (reg_fw_boot_version[0] & 0xF0) >> 4,
              (reg_fw_boot_version[0] & 0x0F) >> 0,
@@ -112,7 +112,7 @@ void ccs811_start_app(ccs811_handle_t dev) {
     ccs811_reg_write(dev, CCS811_REG_BOOTLOADER_APP_START, 0, NULL);
 
     // Delay for 1ms as per spec.
-    vTaskDelay(1 + (100 / portTICK_PERIOD_MS));
+    vTaskDelay(1 + (1 / portTICK_PERIOD_MS));
 
     ccs811_reg_read(dev, CCS811_REG_STATUS, 1, &reg_status);
 
@@ -122,22 +122,22 @@ void ccs811_start_app(ccs811_handle_t dev) {
     }
 }
 
-void ccs811_read_alg_result_data(ccs811_handle_t dev, uint16_t *out_ppm_eco2, uint16_t *out_ppb_tvoc, uint8_t *out_status, uint8_t *out_error_id, uint16_t *out_raw_data) {
+void ccs811_read_alg_result_data(ccs811_handle_t dev, uint16_t *out_eco2_ppm, uint16_t *out_etvoc_ppb, uint8_t *out_status, uint8_t *out_error_id, uint16_t *out_raw_data) {
     uint8_t reg_alg_result_data[8];
     ccs811_reg_read(dev, CCS811_REG_ALG_RESULT_DATA, 8, reg_alg_result_data);
 
-    uint16_t ppm_eco2 = (((uint16_t) reg_alg_result_data[0]) << 8) | (((uint16_t) reg_alg_result_data[1]) << 0);
-    uint16_t ppb_tvoc = (((uint16_t) reg_alg_result_data[2]) << 8) | (((uint16_t) reg_alg_result_data[3]) << 0);
+    uint16_t eco2_ppm = (((uint16_t) reg_alg_result_data[0]) << 8) | (((uint16_t) reg_alg_result_data[1]) << 0);
+    uint16_t etvoc_ppb = (((uint16_t) reg_alg_result_data[2]) << 8) | (((uint16_t) reg_alg_result_data[3]) << 0);
     uint8_t status = reg_alg_result_data[4];
     uint8_t error_id = reg_alg_result_data[5];
     uint16_t raw_data = (((uint16_t) reg_alg_result_data[6]) << 8) | (((uint16_t) reg_alg_result_data[7]) << 0);
 
-    if (out_ppm_eco2) {
-        *out_ppm_eco2 = ppm_eco2;
+    if (out_eco2_ppm) {
+        *out_eco2_ppm = eco2_ppm;
     }
 
-    if (out_ppb_tvoc) {
-        *out_ppb_tvoc = ppb_tvoc;
+    if (out_etvoc_ppb) {
+        *out_etvoc_ppb = etvoc_ppb;
     }
 
     if (out_status) {

@@ -76,6 +76,6 @@ void ccs811_reg_write(ccs811_handle_t dev, ccs811_reg_t reg, size_t count, const
 void ccs811_start_app(ccs811_handle_t dev);
 
 // Read and decode the ALG_RESULT_DATA register.
-void ccs811_read_alg_result_data(ccs811_handle_t dev, uint16_t *ppm_eco2, uint16_t *ppb_tvoc, uint8_t *status, uint8_t *error_id, uint16_t *raw_data);
+void ccs811_read_alg_result_data(ccs811_handle_t dev, uint16_t *out_eco2_ppm, uint16_t *out_etvoc_ppb, uint8_t *out_status, uint8_t *out_error_id, uint16_t *out_raw_data);
 
 #endif
