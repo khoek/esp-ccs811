@@ -67,10 +67,10 @@ void ccs811_destroy(ccs811_handle_t dev);
 void ccs811_reset(ccs811_handle_t dev);
 
 // Read a register over I2C.
-void ccs811_reg_read(ccs811_handle_t dev, ccs811_reg_t reg, size_t count, uint8_t *data);
+void ccs811_reg_read(ccs811_handle_t dev, ccs811_reg_t reg, uint8_t *data, size_t count);
 
 // Write a register over I2C.
-void ccs811_reg_write(ccs811_handle_t dev, ccs811_reg_t reg, size_t count, const uint8_t *data);
+void ccs811_reg_write(ccs811_handle_t dev, ccs811_reg_t reg, const uint8_t *data, size_t count);
 
 // While in the bootloader mode (e.g. after a reset), verify the stored app is valid and start it running.
 void ccs811_start_app(ccs811_handle_t dev);
