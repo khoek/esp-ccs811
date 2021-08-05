@@ -1,5 +1,4 @@
-#ifndef __LIB_CCS811_H
-#define __LIB_CCS811_H
+#pragma once
 
 #include <driver/i2c.h>
 #include <libi2c.h>
@@ -57,25 +56,38 @@ extern const uint8_t CCS811_SW_RESET_COOKIE[4];
 
 typedef i2c_7bit_handle_t ccs811_handle_t;
 
-// Register the Si1145 on the given I2C bus.
-esp_err_t ccs811_init(i2c_port_t port, uint8_t addr, ccs811_handle_t *out_dev);
+// Register the CCS811 on the given I2C bus.
+__result_use_check esp_err_t ccs811_init(i2c_port_t port, uint8_t addr,
+                                         ccs811_handle_t *out_dev);
 
 // Release the given handle.
 void ccs811_destroy(ccs811_handle_t dev);
 
 // Reset the device and read/set calibration data from internal memory.
-void ccs811_reset(ccs811_handle_t dev);
+__result_use_check esp_err_t ccs811_reset(ccs811_handle_t dev);
 
 // Read a register over I2C.
-void ccs811_reg_read(ccs811_handle_t dev, ccs811_reg_t reg, uint8_t *data, size_t count);
+__result_use_check esp_err_t ccs811_reg_read(ccs811_handle_t dev,
+                                             ccs811_reg_t reg, uint8_t *data,
+                                             size_t count);
 
 // Write a register over I2C.
-void ccs811_reg_write(ccs811_handle_t dev, ccs811_reg_t reg, const uint8_t *data, size_t count);
+__result_use_check esp_err_t ccs811_reg_write(ccs811_handle_t dev,
+                                              ccs811_reg_t reg,
+                                              const uint8_t *data,
+                                              size_t count);
 
-// While in the bootloader mode (e.g. after a reset), verify the stored app is valid and start it running.
-void ccs811_start_app(ccs811_handle_t dev);
+// While in the bootloader mode (e.g. after a reset), verify the stored app is
+// valid and start it running.
+__result_use_check esp_err_t ccs811_start_app(ccs811_handle_t dev);
 
 // Read and decode the ALG_RESULT_DATA register.
-void ccs811_read_alg_result_data(ccs811_handle_t dev, uint16_t *out_eco2_ppm, uint16_t *out_etvoc_ppb, uint8_t *out_status, uint8_t *out_error_id, uint16_t *out_raw_data);
+__result_use_check esp_err_t ccs811_read_alg_result_data(
+    ccs811_handle_t dev, uint16_t *out_eco2_ppm, uint16_t *out_etvoc_ppb,
+    uint8_t *out_status, uint8_t *out_error_id, uint16_t *out_raw_data);
 
-#endif
+// Encode a temperature value to be passed to the CCS811.
+void ccs811_encode_temp(double temp_c, uint16_t *raw_temp);
+
+// Encode a humidity value to be passed to the CCS811.
+void ccs811_encode_hum(double rel_humidity, uint16_t *raw_hum);
